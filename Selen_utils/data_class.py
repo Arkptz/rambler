@@ -36,3 +36,4 @@ class Statuses:
     success = 'Success'
     nevalid = 'Невалид'
     left_captcha = 'Левая капча'
+    error_imap = 'Проблемы с imap'

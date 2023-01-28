@@ -194,12 +194,14 @@ class Flow:
                 res = Statuses.error
                 self.log_debug_with_lock(
                     f'{self.data} -- {traceback.format_exc()}')
-        if not self._check_valid_thread(res) and res != Statuses.nevalid:
+        if not self._check_valid_thread(res) and res != Statuses.nevalid and self.data.on_off_imap != Statuses.error:
             self.data_q.put(self.data)
             add_to_end = True
         elif not self._check_valid_thread(res):
             if res == Statuses.success:
-                return 'Error', add_to_end
+                return Statuses.error, add_to_end
+            if self.data.on_off_imap == Statuses.error:
+                return Statuses.error_imap
         return res, add_to_end
 
     def _check_valid_thread(self, res):

@@ -77,6 +77,16 @@ class Rambler(Flow):
                 return Statuses.left_captcha
         self.driver.switch_to.window(cur)
 
+    def _switch(self, elem):
+        elem.click()
+        self.log_debug_with_lock(f'{self.data} -- кликнули по элементу, ждём капчу')
+        if not Captcha.captcha_check(self.driver):
+            return False
+        else:
+            self.wait_click(
+                '//button[@class="rui-Button-button rui-Button-type-primary rui-Button-size-small rui-Button-iconPosition-left MailAppsChange-submitButton-S7"]', sleeps=3)  # отправить
+            return True
+
     def switch_imap(self):
         self.go_setting()
         self.log_debug_with_lock(f'{self.data} -- go_setting')
@@ -87,17 +97,19 @@ class Rambler(Flow):
         self.log_debug_with_lock(f'{self.data} -- ищем элем вкл')
         val = elem.get_attribute('aria-pressed')
         if val == 'true':
-            self.log_debug_with_lock(f'{self.data} -- imap уже включён')
-            return True
-        else:
-            elem.click()
-            self.log_debug_with_lock(f'{self.data} -- кликнули по элементу, ждём капчу')
-            if not Captcha.captcha_check(self.driver):
-                return False
-            else:
-                self.wait_click(
-                    '//button[@class="rui-Button-button rui-Button-type-primary rui-Button-size-small rui-Button-iconPosition-left MailAppsChange-submitButton-S7"]', sleeps=3)  # отправить
+            ci = self.check_imap(self.data.login, self.data.password)
+            if ci:
+                self.log_debug_with_lock(f'{self.data} -- imap уже включён')
                 return True
+            else:
+                elem_off = self.wait_and_return_elem(
+            '//button[contains(@class, "rui-ToggleOption-toggleOption") and @value="false"]', sleeps=5)
+                self._switch(elem_off)
+                sleep(2)
+                self._switch(elem)
+                return True
+        else:
+            self._switch(elem)
 
     def change_pass(self):
         self.get_new(
@@ -121,6 +133,7 @@ class Rambler(Flow):
             mail.login(log, pas)
             return True
         except Exception as e:
+            traceback.print_exc()
             return False
 
     def restart_driver(self):
@@ -154,6 +167,7 @@ class Rambler(Flow):
                     imap_on = self.switch_imap()
                     if imap_on:
                         sleep(5)
+                        print(self.check_imap(self.data.login, self.data.password))
                         if self.check_imap(self.data.login, self.data.password):
                             self.log_debug_with_lock(f'{self.data} -- imap включён')
                             self.data.on_off_imap = Statuses.success
@@ -161,6 +175,7 @@ class Rambler(Flow):
                         else:
                             self.data.on_off_imap = Statuses.error
                             imap_on = False
+                            self.log_debug_with_lock(f'{self.data} -- imap не включился')
 
                     else:
                         self.get_new(
