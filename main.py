@@ -97,17 +97,15 @@ class Rambler(Flow):
         self.log_debug_with_lock(f'{self.data} -- ищем элем вкл')
         val = elem.get_attribute('aria-pressed')
         if val == 'true':
-            ci = self.check_imap(self.data.login, self.data.password)
-            if ci:
-                self.log_debug_with_lock(f'{self.data} -- imap уже включён')
-                return True
-            else:
-                elem_off = self.wait_and_return_elem(
-            '//button[contains(@class, "rui-ToggleOption-toggleOption") and @value="false"]', sleeps=5)
-                self._switch(elem_off)
-                sleep(2)
-                self._switch(elem)
-                return True
+            self.log_debug_with_lock(f'{self.data} -- imap уже включён')
+            return True
+            # else:
+            #     elem_off = self.wait_and_return_elem(
+            # '//button[contains(@class, "rui-ToggleOption-toggleOption") and @value="false"]', sleeps=5)
+            #     self._switch(elem_off)
+            #     sleep(2)
+            #     self._switch(elem)
+            #     return True
         else:
             self._switch(elem)
 
@@ -166,7 +164,6 @@ class Rambler(Flow):
                     imap_on = self.switch_imap()
                     if imap_on:
                         sleep(5)
-                        print(self.check_imap(self.data.login, self.data.password))
                         if self.check_imap(self.data.login, self.data.password):
                             self.log_debug_with_lock(f'{self.data} -- imap включён')
                             self.data.on_off_imap = Statuses.success
