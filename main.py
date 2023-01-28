@@ -133,7 +133,6 @@ class Rambler(Flow):
             mail.login(log, pas)
             return True
         except Exception as e:
-            traceback.print_exc()
             return False
 
     def restart_driver(self):
