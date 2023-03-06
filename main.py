@@ -229,7 +229,6 @@ if __name__ == '__main__':
                         if 'true' in file.read():
                             continue
                     data = data_q.get()
-                    print(data)
                     proxx = random.choice(proxy_list)
                     # proxx.change_ip()
                     proxy_list.remove(proxx)
