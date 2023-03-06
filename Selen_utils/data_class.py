@@ -15,7 +15,7 @@ class data_cl:
     def __init__(self, string:str) -> None:
         self.string = string
         spl_string = string.split(':')
-        count_true_false = ctf=  string.count('true')
+        count_true_false = ctf=  spl_string.count('true')
         lenght = ln = len(spl_string)
         if ln == 2 +ctf:
             self.login,self.password = spl_string[:2]
@@ -29,6 +29,7 @@ class data_cl:
         else:
             logger.error(f'Ошибка ввода данных: {string}')
             sys.exit()
+
 
 
 class Statuses:

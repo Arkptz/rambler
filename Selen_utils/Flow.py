@@ -68,7 +68,7 @@ class Flow:
             options_c.add_extension(
                 anticaptcha_path)
         self.driver = webdriver.Chrome(
-            options=options_c, seleniumwire_options=options, service_log_path='NUL')
+            options=options_c, seleniumwire_options=options, service_log_path='NUL', executable_path = 'files/chromedriver.exe')
         self.driver.set_window_size(1700, 1080)
         self.wait = WebDriverWait(self.driver, 30)
         if self.proxy.proxy_link:
